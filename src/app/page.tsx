@@ -8,6 +8,7 @@ import { AiSuggestion } from "@/components/ai-suggestion";
 import { TaskSkeleton } from "@/components/task-skeleton";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SplashScreen } from "@/components/splash-screen";
 
 const TaskSchema = z.object({
   id: z.string(),
@@ -19,6 +20,15 @@ const TasksSchema = z.array(TaskSchema);
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 5000);
+
+    return () => clearTimeout(splashTimer);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
@@ -72,6 +82,10 @@ export default function Home() {
       tasks.map((task) => (task.id === id ? { ...task, text } : task))
     );
   };
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return (
     <div className="w-full max-w-3xl mx-auto">
