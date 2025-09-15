@@ -3,7 +3,14 @@
 import type { Task } from "@/lib/types";
 import { TaskItem } from "@/components/task-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface TaskListProps {
   tasks: Task[];
@@ -27,33 +34,29 @@ export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
 
   return (
     <ScrollArea className="h-[40vh] pr-4">
-      <div className="space-y-2">
-        {activeTasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggle={onToggle}
-            onDelete={onDelete}
-            onEdit={onEdit}
-          />
-        ))}
-
-        {activeTasks.length > 0 && completedTasks.length > 0 && (
-            <div className="py-2">
-                <Separator />
-            </div>
-        )}
-
-        {completedTasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggle={onToggle}
-            onDelete={onDelete}
-            onEdit={onEdit}
-          />
-        ))}
-      </div>
+      <Table>
+        <TableCaption>
+          {completedTasks.length} completed tasks.
+        </TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[50px]"></TableHead>
+            <TableHead>Task</TableHead>
+            <TableHead className="text-right w-[100px]">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggle={onToggle}
+              onDelete={onDelete}
+              onEdit={onEdit}
+            />
+          ))}
+        </TableBody>
+      </Table>
     </ScrollArea>
   );
 }
