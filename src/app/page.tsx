@@ -67,6 +67,12 @@ export default function Home() {
   const handleDeleteTask = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));
   };
+  
+  const handleEditTask = (id: string, text: string) => {
+    setTasks(
+      tasks.map((task) => (task.id === id ? { ...task, text } : task))
+    );
+  };
 
   return (
     <main className="flex min-h-full flex-col items-center justify-start p-4 sm:p-8 md:p-12">
@@ -90,6 +96,7 @@ export default function Home() {
                 tasks={tasks}
                 onToggle={handleToggleTask}
                 onDelete={handleDeleteTask}
+                onEdit={handleEditTask}
               />
             ) : (
               <TaskSkeleton />
