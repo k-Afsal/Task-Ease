@@ -29,7 +29,6 @@ export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
     );
   }
   
-  const activeTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
 
   return (
