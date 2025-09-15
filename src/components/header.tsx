@@ -1,4 +1,5 @@
 import { DynamicInfo } from "./dynamic-info";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
     return (
@@ -12,7 +13,10 @@ export function Header() {
                         Your calm and focused to-do list.
                     </p>
                 </div>
-                <DynamicInfo />
+                <div className="flex items-center gap-4">
+                  <DynamicInfo />
+                  <ThemeToggle />
+                </div>
             </div>
         </header>
     );
