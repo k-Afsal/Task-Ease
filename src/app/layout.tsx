@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -17,32 +16,11 @@ import { ThemeProvider } from '@/components/theme-provider';
 //   description: 'A simple and smart to-do list app.',
 // };
 
-const rainbowColors = [
-  '#FF0000', // Red
-  '#FF7F00', // Orange
-  '#FFFF00', // Yellow
-  '#00FF00', // Green
-  '#0000FF', // Blue
-  '#4B0082', // Indigo
-  '#9400D3', // Violet
-];
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [colorIndex, setColorIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setColorIndex((prevIndex) => (prevIndex + 1) % rainbowColors.length);
-    }, 60000); // 1 minute
-
-    return () => clearInterval(interval);
-  }, []);
-
-
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
@@ -64,8 +42,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div 
-            className="h-full transition-colors duration-1000"
-            style={{ backgroundColor: rainbowColors[colorIndex] }}
+            className="h-full bg-background"
           >
             <Header />
             <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
