@@ -9,6 +9,7 @@ import { TaskSkeleton } from "@/components/task-skeleton";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SplashScreen } from "@/components/splash-screen";
+import { Header } from "@/components/header";
 
 const TaskSchema = z.object({
   id: z.string(),
@@ -88,27 +89,32 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
-        <Card className="shadow-2xl bg-card/60 backdrop-blur-lg border-white/20">
-          <CardHeader>
-             <AddTaskForm onAddTask={handleAddTask} />
-          </CardHeader>
-          <CardContent>
-            {isMounted ? (
-              <TaskList
-                tasks={tasks}
-                onToggle={handleToggleTask}
-                onDelete={handleDeleteTask}
-                onEdit={handleEditTask}
-              />
-            ) : (
-              <TaskSkeleton />
-            )}
-            <div className="mt-6 flex justify-center">
-              <AiSuggestion tasks={tasks} onAddTask={handleAddTask} />
-            </div>
-          </CardContent>
-        </Card>
-    </div>
+    <>
+      <Header />
+      <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
+        <div className="w-full max-w-3xl mx-auto">
+            <Card className="shadow-2xl bg-card/60 backdrop-blur-lg border-white/20">
+              <CardHeader>
+                 <AddTaskForm onAddTask={handleAddTask} />
+              </CardHeader>
+              <CardContent>
+                {isMounted ? (
+                  <TaskList
+                    tasks={tasks}
+                    onToggle={handleToggleTask}
+                    onDelete={handleDeleteTask}
+                    onEdit={handleEditTask}
+                  />
+                ) : (
+                  <TaskSkeleton />
+                )}
+                <div className="mt-6 flex justify-center">
+                  <AiSuggestion tasks={tasks} onAddTask={handleAddTask} />
+                </div>
+              </CardContent>
+            </Card>
+        </div>
+      </main>
+    </>
   );
 }

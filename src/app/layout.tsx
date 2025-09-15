@@ -44,10 +44,7 @@ export default function RootLayout({
           <div 
             className="h-full bg-background"
           >
-            <Header />
-            <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
-                {children}
-            </main>
+            {children}
             <Toaster />
           </div>
         </ThemeProvider>
