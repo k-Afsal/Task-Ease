@@ -26,9 +26,9 @@ export default function RootLayout({
           'font-body antialiased h-full bg-cover bg-fixed bg-center',
         )}
         style={{
-          backgroundImage: "url('https://picsum.photos/seed/4/1920/1080')",
+          backgroundImage: "url('https://picsum.photos/seed/sky/1920/1080')",
         }}
-        data-ai-hint="background landscape"
+        data-ai-hint="background sky"
         >
         <Header />
         <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">

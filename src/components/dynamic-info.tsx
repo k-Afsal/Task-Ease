@@ -19,7 +19,7 @@ export function DynamicInfo() {
 
   if (!isMounted) {
     return (
-        <div className="flex items-center gap-6 text-sm text-foreground animate-pulse">
+        <div className="flex items-center gap-6 text-sm text-primary-foreground animate-pulse">
             <div className="flex items-center gap-2"><Sun className="size-4" /> <Skeleton className="h-4 w-12" /></div>
             <div className="flex items-center gap-2"><MapPin className="size-4" /> <Skeleton className="h-4 w-20" /></div>
             <div className="flex items-center gap-2"><Clock className="size-4" /> <Skeleton className="h-4 w-16" /></div>
@@ -28,17 +28,17 @@ export function DynamicInfo() {
   }
 
   return (
-    <div className="flex items-center gap-4 md:gap-6 text-sm text-foreground">
+    <div className="flex items-center gap-4 md:gap-6 text-sm text-primary-foreground">
       <div className="flex items-center gap-2 font-medium">
-        <Sun className="size-4 text-primary" />
+        <Sun className="size-4" />
         <span>Sunny</span>
       </div>
       <div className="flex items-center gap-2 font-medium">
-        <MapPin className="size-4 text-primary" />
+        <MapPin className="size-4" />
         <span>San Francisco</span>
       </div>
       <div className="flex items-center gap-2 font-medium">
-        <Clock className="size-4 text-primary" />
+        <Clock className="size-4" />
         <span className="font-mono">{time}</span>
       </div>
     </div>
