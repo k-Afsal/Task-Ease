@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 export const metadata: Metadata = {
   title: 'TaskEase',
@@ -21,9 +20,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased h-full bg-background">
-        <SidebarProvider>
-          {children}
-        </SidebarProvider>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
+            {children}
+        </main>
         <Toaster />
       </body>
     </html>

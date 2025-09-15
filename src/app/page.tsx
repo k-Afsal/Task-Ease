@@ -1,55 +1,109 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-  SidebarTrigger,
-  SidebarFooter,
-} from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogOut } from 'lucide-react';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { Dashboard } from '@/app/dashboard/page';
+"use client";
+
+import { useState, useEffect } from "react";
+import { type Task } from "@/lib/types";
+import { AddTaskForm } from "@/components/add-task-form";
+import { TaskList } from "@/components/task-list";
+import { AiSuggestion } from "@/components/ai-suggestion";
+import { TaskSkeleton } from "@/components/task-skeleton";
+import { z } from "zod";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+const TaskSchema = z.object({
+  id: z.string(),
+  text: z.string().min(1, "Task cannot be empty"),
+  completed: z.boolean(),
+});
+const TasksSchema = z.array(TaskSchema);
 
 export default function Home() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    try {
+      const storedTasks = localStorage.getItem("tasks");
+      if (storedTasks) {
+        const parsed = JSON.parse(storedTasks);
+        const validation = TasksSchema.safeParse(parsed);
+        if (validation.success) {
+          setTasks(validation.data);
+        } else {
+          localStorage.removeItem("tasks");
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load tasks from local storage", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+  }, [tasks, isMounted]);
+
+  const handleAddTask = (text: string) => {
+    if (text.trim()) {
+      const newTask: Task = {
+        id: crypto.randomUUID(),
+        text,
+        completed: false,
+      };
+      setTasks([newTask, ...tasks]);
+    }
+  };
+
+  const handleToggleTask = (id: string) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const handleDeleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+  
+  const handleEditTask = (id: string, text: string) => {
+    setTasks(
+      tasks.map((task) => (task.id === id ? { ...task, text } : task))
+    );
+  };
+
   return (
-    <div className="flex min-h-screen">
-      <Sidebar>
-        <SidebarHeader>
-          <h1 className="font-headline text-2xl font-bold text-primary">
-            TaskEase
-          </h1>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive>
-                <LayoutDashboard />
-                Dashboard
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-          <Button variant="ghost" className="justify-start">
-            <LogOut />
-            Logout
-          </Button>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset className="flex flex-col">
-        <Header>
-          <SidebarTrigger />
-        </Header>
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
-            <Dashboard />
-        </main>
-        <Footer />
-      </SidebarInset>
+    <div className="w-full max-w-4xl mx-auto">
+      <header className="text-center mb-8">
+        <h1 className="font-headline text-5xl font-bold text-primary">
+          TaskEase
+        </h1>
+        <p className="text-muted-foreground mt-2 text-lg">
+          Your calm and focused to-do list.
+        </p>
+      </header>
+
+      <Card className="shadow-lg">
+        <CardHeader>
+           <AddTaskForm onAddTask={handleAddTask} />
+        </CardHeader>
+        <CardContent>
+          {isMounted ? (
+            <TaskList
+              tasks={tasks}
+              onToggle={handleToggleTask}
+              onDelete={handleDeleteTask}
+              onEdit={handleEditTask}
+            />
+          ) : (
+            <TaskSkeleton />
+          )}
+          <div className="mt-6 flex justify-center">
+            <AiSuggestion tasks={tasks} onAddTask={handleAddTask} />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
