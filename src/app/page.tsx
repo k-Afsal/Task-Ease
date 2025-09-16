@@ -26,23 +26,24 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("authenticated");
-    if (!isAuthenticated) {
+    const authStatus = localStorage.getItem("authenticated");
+    if (!authStatus) {
       router.push("/login");
+    } else {
+      setIsAuthenticated(true);
+      const splashTimer = setTimeout(() => {
+        setShowSplash(false);
+      }, 2000);
+      return () => clearTimeout(splashTimer);
     }
-
-    const splashTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000); 
-
-    return () => clearTimeout(splashTimer);
   }, [router]);
 
   useEffect(() => {
-    if (localStorage.getItem("authenticated")) {
+    if (isAuthenticated) {
       setIsMounted(true);
       try {
         const storedTasks = localStorage.getItem("tasks");
@@ -62,7 +63,7 @@ export default function Home() {
         console.error("Failed to load tasks from local storage", e);
       }
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isMounted) {
@@ -101,13 +102,12 @@ export default function Home() {
     );
   };
 
+  if (!isAuthenticated) {
+    return null; 
+  }
 
   if (showSplash) {
     return <SplashScreen />;
-  }
-  
-  if (!localStorage.getItem("authenticated")) {
-    return null; 
   }
 
   return (
