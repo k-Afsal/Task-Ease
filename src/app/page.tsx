@@ -1,20 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { type Task } from "@/lib/types";
+import { type Task, type TaskStatus } from "@/lib/types";
 import { AddTaskForm } from "@/components/add-task-form";
 import { TaskList } from "@/components/task-list";
 import { AiSuggestion } from "@/components/ai-suggestion";
 import { TaskSkeleton } from "@/components/task-skeleton";
 import { z } from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SplashScreen } from "@/components/splash-screen";
 import { Header } from "@/components/header";
 
 const TaskSchema = z.object({
   id: z.string(),
   text: z.string().min(1, "Task cannot be empty"),
-  completed: z.boolean(),
+  description: z.string().optional(),
+  status: z.enum(['To Do', 'In Progress', 'Done']),
+  dueDate: z.coerce.date().optional(),
+  createdAt: z.coerce.date(),
 });
 const TasksSchema = z.array(TaskSchema);
 
@@ -41,6 +44,7 @@ export default function Home() {
         if (validation.success) {
           setTasks(validation.data);
         } else {
+          console.error("Zod validation error:", validation.error);
           localStorage.removeItem("tasks");
         }
       }
@@ -60,29 +64,32 @@ export default function Home() {
       const newTask: Task = {
         id: crypto.randomUUID(),
         text,
-        completed: false,
+        description: 'This is a placeholder for additional task content, like a description or notes.',
+        status: 'To Do',
+        createdAt: new Date(),
       };
       setTasks([newTask, ...tasks]);
     }
-  };
-
-  const handleToggleTask = (id: string) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
   };
 
   const handleDeleteTask = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));
   };
   
-  const handleEditTask = (id: string, text: string) => {
+  const handleEditTask = (id: string, updatedTask: Partial<Omit<Task, 'id'>>) => {
     setTasks(
-      tasks.map((task) => (task.id === id ? { ...task, text } : task))
+      tasks.map((task) => (task.id === id ? { ...task, ...updatedTask } : task))
     );
   };
+
+  const handleUpdateTaskStatus = (id: string, status: TaskStatus) => {
+    setTasks(
+        tasks.map((task) =>
+            task.id === id ? { ...task, status } : task
+        )
+    );
+  };
+
 
   if (showSplash) {
     return <SplashScreen />;
@@ -92,7 +99,7 @@ export default function Home() {
     <>
       <Header />
       <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
-        <div className="w-full max-w-3xl mx-auto">
+        <div className="w-full max-w-5xl mx-auto">
             <Card className="shadow-2xl bg-card/60 backdrop-blur-lg border-white/20">
               <CardHeader>
                  <AddTaskForm onAddTask={handleAddTask} />
@@ -101,9 +108,9 @@ export default function Home() {
                 {isMounted ? (
                   <TaskList
                     tasks={tasks}
-                    onToggle={handleToggleTask}
                     onDelete={handleDeleteTask}
                     onEdit={handleEditTask}
+                    onUpdateStatus={handleUpdateTaskStatus}
                   />
                 ) : (
                   <TaskSkeleton />

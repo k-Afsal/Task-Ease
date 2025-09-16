@@ -1,17 +1,17 @@
 "use client";
 
-import type { Task } from "@/lib/types";
+import type { Task, TaskStatus } from "@/lib/types";
 import { TaskItem } from "@/components/task-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TaskListProps {
   tasks: Task[];
-  onToggle: (id: string) => void;
   onDelete: (id: string) => void;
-  onEdit: (id: string, text: string) => void;
+  onEdit: (id: string, updatedTask: Partial<Omit<Task, 'id'>>) => void;
+  onUpdateStatus: (id: string, status: TaskStatus) => void;
 }
 
-export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
+export function TaskList({ tasks, onDelete, onEdit, onUpdateStatus }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-10">
@@ -21,16 +21,18 @@ export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
     );
   }
   
+  const sortedTasks = [...tasks].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   return (
     <ScrollArea className="h-[calc(100vh-280px)] pr-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tasks.map((task) => (
+        {sortedTasks.map((task) => (
           <TaskItem
             key={task.id}
             task={task}
-            onToggle={onToggle}
             onDelete={onDelete}
             onEdit={onEdit}
+            onUpdateStatus={onUpdateStatus}
           />
         ))}
       </div>

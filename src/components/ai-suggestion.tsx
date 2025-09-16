@@ -30,8 +30,8 @@ export function AiSuggestion({ tasks, onAddTask }: AiSuggestionProps) {
     setIsLoading(true);
     setSuggestion(null);
 
-    const activeTasks = tasks.filter((t) => !t.completed).map((t) => t.text);
-    const completedTasks = tasks.filter((t) => t.completed).map((t) => t.text);
+    const activeTasks = tasks.filter((t) => t.status !== 'Done').map((t) => t.text);
+    const completedTasks = tasks.filter((t) => t.status === 'Done').map((t) => t.text);
 
     let userContext = `The user has ${activeTasks.length} active tasks and ${completedTasks.length} completed tasks.`;
     if (activeTasks.length > 0) {
