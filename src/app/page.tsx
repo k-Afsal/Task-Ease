@@ -40,20 +40,13 @@ export default function Home() {
       const storedTasks = localStorage.getItem("tasks");
       if (storedTasks) {
         const parsed = JSON.parse(storedTasks);
-        // Attempt to migrate old data first
-        const migratedTasks = parsed.map((task: any) => ({
-          ...task,
-          status: task.status || 'To Do',
-          createdAt: task.createdAt || new Date().toISOString(),
-          dueDate: task.dueDate ? new Date(task.dueDate) : undefined
-        }));
         
-        const validation = TasksSchema.safeParse(migratedTasks);
+        const validation = TasksSchema.safeParse(parsed);
 
         if (validation.success) {
           setTasks(validation.data);
         } else {
-          console.error("Zod validation error after migration:", validation.error);
+          console.error("Zod validation error:", validation.error);
           localStorage.removeItem("tasks");
         }
       }
