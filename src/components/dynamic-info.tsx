@@ -7,6 +7,7 @@ import { Skeleton } from './ui/skeleton';
 export function DynamicInfo() {
   const [time, setTime] = useState('');
   const [greeting, setGreeting] = useState('');
+  const [location, setLocation] = useState('Loading...');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -27,6 +28,22 @@ export function DynamicInfo() {
 
     updateDateTime();
     const timer = setInterval(updateDateTime, 1000 * 60); // Update every minute
+    
+    const fetchLocation = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch location');
+        }
+        const data = await response.json();
+        setLocation(`${data.city}, ${data.country_code}`);
+      } catch (error) {
+        console.error('Error fetching location:', error);
+        setLocation('Unknown Location');
+      }
+    };
+
+    fetchLocation();
 
     return () => clearInterval(timer);
   }, []);
@@ -56,7 +73,7 @@ export function DynamicInfo() {
       </div>
       <div className="flex items-center gap-2 font-medium">
         <MapPin className="size-4" />
-        <span>San Francisco</span>
+        <span>{location}</span>
       </div>
       <div className="flex items-center gap-2 font-medium">
         <Clock className="size-4" />
