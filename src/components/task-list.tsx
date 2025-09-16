@@ -3,14 +3,6 @@
 import type { Task } from "@/lib/types";
 import { TaskItem } from "@/components/task-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 interface TaskListProps {
   tasks: Task[];
@@ -29,33 +21,19 @@ export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
     );
   }
   
-  const completedTasks = tasks.filter(task => task.completed);
-
   return (
-    <ScrollArea className="h-[40vh] pr-4">
-      <Table>
-        <TableCaption>
-          {completedTasks.length} completed tasks.
-        </TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[50px]"></TableHead>
-            <TableHead>Task</TableHead>
-            <TableHead className="text-right w-[100px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {tasks.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              onToggle={onToggle}
-              onDelete={onDelete}
-              onEdit={onEdit}
-            />
-          ))}
-        </TableBody>
-      </Table>
+    <ScrollArea className="h-[calc(100vh-280px)] pr-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {tasks.map((task) => (
+          <TaskItem
+            key={task.id}
+            task={task}
+            onToggle={onToggle}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
+        ))}
+      </div>
     </ScrollArea>
   );
 }

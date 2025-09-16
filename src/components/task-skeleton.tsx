@@ -1,41 +1,21 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "./ui/card";
 
 export function TaskSkeleton() {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[50px]"></TableHead>
-          <TableHead>Task</TableHead>
-          <TableHead className="text-right w-[100px]">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {[...Array(3)].map((_, i) => (
-          <TableRow key={i}>
-            <TableCell>
-              <Skeleton className="h-6 w-6 rounded-sm" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-6 flex-1" />
-            </TableCell>
-            <TableCell className="text-right">
-              <div className="flex gap-2 justify-end">
-                <Skeleton className="h-8 w-8 rounded-md" />
-                <Skeleton className="h-8 w-8 rounded-md" />
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[...Array(3)].map((_, i) => (
+        <Card key={i}>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <Skeleton className="h-6 w-2/3" />
+                <Skeleton className="h-6 w-6 rounded-sm" />
+            </CardHeader>
+            <CardContent className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+            </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 }
