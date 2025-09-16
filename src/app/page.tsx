@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { type Task, type TaskStatus } from "@/lib/types";
 import { AddTaskForm } from "@/components/add-task-form";
 import { TaskList } from "@/components/task-list";
@@ -25,33 +26,41 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
+    const isAuthenticated = localStorage.getItem("authenticated");
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 5000);
+    }, 2000); 
 
     return () => clearTimeout(splashTimer);
-  }, []);
+  }, [router]);
 
   useEffect(() => {
-    setIsMounted(true);
-    try {
-      const storedTasks = localStorage.getItem("tasks");
-      if (storedTasks) {
-        const parsed = JSON.parse(storedTasks);
-        
-        const validation = TasksSchema.safeParse(parsed);
+    if (localStorage.getItem("authenticated")) {
+      setIsMounted(true);
+      try {
+        const storedTasks = localStorage.getItem("tasks");
+        if (storedTasks) {
+          const parsed = JSON.parse(storedTasks);
+          
+          const validation = TasksSchema.safeParse(parsed);
 
-        if (validation.success) {
-          setTasks(validation.data);
-        } else {
-          console.error("Zod validation error:", validation.error);
-          localStorage.removeItem("tasks");
+          if (validation.success) {
+            setTasks(validation.data);
+          } else {
+            console.error("Zod validation error:", validation.error);
+            localStorage.removeItem("tasks");
+          }
         }
+      } catch (e) {
+        console.error("Failed to load tasks from local storage", e);
       }
-    } catch (e) {
-      console.error("Failed to load tasks from local storage", e);
     }
   }, []);
 
@@ -95,6 +104,10 @@ export default function Home() {
 
   if (showSplash) {
     return <SplashScreen />;
+  }
+  
+  if (!localStorage.getItem("authenticated")) {
+    return null; 
   }
 
   return (
