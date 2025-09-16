@@ -40,25 +40,21 @@ export default function Home() {
       const storedTasks = localStorage.getItem("tasks");
       if (storedTasks) {
         const parsed = JSON.parse(storedTasks);
-        const validation = TasksSchema.safeParse(parsed);
+        // Attempt to migrate old data first
+        const migratedTasks = parsed.map((task: any) => ({
+          ...task,
+          status: task.status || 'To Do',
+          createdAt: task.createdAt || new Date().toISOString(),
+          dueDate: task.dueDate ? new Date(task.dueDate) : undefined
+        }));
+        
+        const validation = TasksSchema.safeParse(migratedTasks);
+
         if (validation.success) {
           setTasks(validation.data);
         } else {
-          console.error("Zod validation error:", validation.error);
-          // Attempt to migrate old data
-          const migratedTasks = parsed.map((task: any) => ({
-            ...task,
-            status: task.status || 'To Do',
-            createdAt: task.createdAt || new Date().toISOString(),
-          }));
-          const migratedValidation = TasksSchema.safeParse(migratedTasks);
-          if (migratedValidation.success) {
-            setTasks(migratedValidation.data);
-            localStorage.setItem("tasks", JSON.stringify(migratedValidation.data));
-          } else {
-            console.error("Zod migration failed:", migratedValidation.error);
-            localStorage.removeItem("tasks");
-          }
+          console.error("Zod validation error after migration:", validation.error);
+          localStorage.removeItem("tasks");
         }
       }
     } catch (e) {
@@ -111,8 +107,8 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12">
-        <div className="w-full max-w-5xl mx-auto">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+        <div className="w-full max-w-7xl mx-auto">
             <Card className="shadow-2xl bg-card/60 backdrop-blur-lg border-white/20">
               <CardHeader>
                  <AddTaskForm onAddTask={handleAddTask} />

@@ -24,7 +24,7 @@ export function TaskList({ tasks, onDelete, onEdit, onUpdateStatus }: TaskListPr
   const sortedTasks = [...tasks].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
-    <ScrollArea className="h-[calc(100vh-280px)] pr-4">
+    <ScrollArea className="h-[calc(100vh-320px)] sm:h-[calc(100vh-280px)] pr-4 -mr-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedTasks.map((task) => (
           <TaskItem

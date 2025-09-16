@@ -26,13 +26,13 @@ export function AddTaskForm({ onAddTask }: AddTaskFormProps) {
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="What's on your mind? Add a new task..."
+        placeholder="What's on your mind?..."
         className="text-base h-11"
         aria-label="New task input"
       />
-      <Button type="submit" size="lg" aria-label="Add new task">
+      <Button type="submit" size="lg" className="px-4 sm:px-8" aria-label="Add new task">
         <Plus />
-        Add Task
+        <span className="hidden sm:inline">Add Task</span>
       </Button>
     </form>
   );
