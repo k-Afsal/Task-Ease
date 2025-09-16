@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -26,15 +27,15 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const authStatus = localStorage.getItem("authenticated");
-    if (!authStatus) {
-      router.push("/login");
-    } else {
+    if (authStatus === "true") {
       setIsAuthenticated(true);
+    } else {
+      router.push("/login");
     }
   }, [router]);
 
@@ -45,7 +46,11 @@ export default function Home() {
         setShowSplash(false);
       }, 2000);
     }
-    return () => clearTimeout(splashTimer);
+    return () => {
+      if (splashTimer) {
+        clearTimeout(splashTimer);
+      }
+    };
   }, [isAuthenticated]);
   
   useEffect(() => {
@@ -108,8 +113,8 @@ export default function Home() {
     );
   };
 
-  if (!isAuthenticated) {
-    return null; 
+  if (isAuthenticated === null) {
+    return null; // Don't render anything until authentication status is determined
   }
 
   if (showSplash) {
