@@ -35,13 +35,19 @@ export default function Home() {
       router.push("/login");
     } else {
       setIsAuthenticated(true);
-      const splashTimer = setTimeout(() => {
-        setShowSplash(false);
-      }, 2000);
-      return () => clearTimeout(splashTimer);
     }
   }, [router]);
 
+  useEffect(() => {
+    let splashTimer: NodeJS.Timeout;
+    if (isAuthenticated) {
+      splashTimer = setTimeout(() => {
+        setShowSplash(false);
+      }, 2000);
+    }
+    return () => clearTimeout(splashTimer);
+  }, [isAuthenticated]);
+  
   useEffect(() => {
     if (isAuthenticated) {
       setIsMounted(true);
