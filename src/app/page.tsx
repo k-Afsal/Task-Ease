@@ -15,9 +15,9 @@ const TaskSchema = z.object({
   id: z.string(),
   text: z.string().min(1, "Task cannot be empty"),
   description: z.string().optional(),
-  status: z.enum(['To Do', 'In Progress', 'Done']),
+  status: z.enum(['To Do', 'In Progress', 'Done']).default('To Do'),
   dueDate: z.coerce.date().optional(),
-  createdAt: z.coerce.date(),
+  createdAt: z.coerce.date().default(() => new Date()),
 });
 const TasksSchema = z.array(TaskSchema);
 
@@ -45,7 +45,20 @@ export default function Home() {
           setTasks(validation.data);
         } else {
           console.error("Zod validation error:", validation.error);
-          localStorage.removeItem("tasks");
+          // Attempt to migrate old data
+          const migratedTasks = parsed.map((task: any) => ({
+            ...task,
+            status: task.status || 'To Do',
+            createdAt: task.createdAt || new Date().toISOString(),
+          }));
+          const migratedValidation = TasksSchema.safeParse(migratedTasks);
+          if (migratedValidation.success) {
+            setTasks(migratedValidation.data);
+            localStorage.setItem("tasks", JSON.stringify(migratedValidation.data));
+          } else {
+            console.error("Zod migration failed:", migratedValidation.error);
+            localStorage.removeItem("tasks");
+          }
         }
       }
     } catch (e) {
